@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
 	sourceFile.close();
 
-	auto tokens = tokenize(sourceCode, {"(", ")", "[", "]", "<", ">", "{", "}", ";", "::", ":"}, {"int", "string", "return"}, {"int", "float", "bool", "string", "null"});
+	auto tokens = tokenize(sourceCode, {"(", ")", "[", "]", "<", ">", "{", "}", ";", "::", ":", "=", "*", "+", "-" "/"}, {"int", "string", "return"}, {"int", "float", "bool", "string", "null"});
 
 	for (auto i: tokens)
 		std::cout << i.tokenType << " " << i.literal << "\n";
