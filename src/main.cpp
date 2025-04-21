@@ -5,6 +5,7 @@
 
 int main(int argc, char *argv[])
 {
+
 	std::string sourceCode;
 	std::ifstream sourceFile;
 	sourceFile.open(argv[1]);
@@ -21,12 +22,14 @@ int main(int argc, char *argv[])
 
 	sourceFile.close();
 
-	auto tokens = tokenize(sourceCode, {"(", ")", "[", "]", "<", ">", "{", "}", ";", "::", ":", "=", "*", "+", "-" "/"}, {"int", "string", "return"}, {"int", "float", "bool", "string", "null"});
+	auto tokens = tokenize(sourceCode, {"(", ")", "[", "]", "<", ">", "{", "}", ";", "::", ":", "=", "*", "+", "-" "/"}, {"return"}, {"int8", "int16", "int16", "int32", "float", "bool", "string", "null"});
 
 	cg_generate(tokens);
 
+	/*
 	for (auto i: tokens)
 		std::cout << i.tokenType << " " << i.literal << "\n";
+	*/
 
 	return 1;
 }
