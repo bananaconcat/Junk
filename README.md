@@ -5,4 +5,4 @@
 
 # Contemplating
 
- - Unsigned integers (eg. uint32)
+ - ~~Unsigned integers (eg. uint32)~~ No easy way of doing it, cba
