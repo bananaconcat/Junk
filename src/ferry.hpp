@@ -22,10 +22,17 @@ class FToken
 
 int customDebugCount = 0;
 
-void customDebug()
+void customDebug(int nu)
 {
-	customDebugCount++;
-	std::cout << customDebugCount;
+	if (nu == 0)
+	{
+		customDebugCount++;
+		std::cout << "[CustomDebug] " << customDebugCount << "\n";
+	}
+	else
+	{
+		std::cout << "[CustomDebug] " << nu << "\n";
+	}
 }
 
 std::vector<FToken> tokenize(std::string sourceCode, const std::vector<std::string> symbols, const std::vector<std::string> keywords, const std::vector<std::string> dataTypes)
@@ -86,7 +93,7 @@ std::vector<FToken> tokenize(std::string sourceCode, const std::vector<std::stri
 			}
 
 			std::string word = sourceCode.substr(startIndex, currentIndex - startIndex);
-			int wordType = 0; // 0 Identifier, 1 Keyword, 2 Data type
+			int wordType = 0;
 
 			for (const auto& keyword : keywords)
 			{
@@ -144,7 +151,9 @@ std::string cg_collect_variables(std::vector<FToken> tokens)
 				{
 					std::string t_dt = tokens[i - 2].literal;
 
-					if (t_dt == "string" || t_dt == "int8")
+					if (t_dt == "string")
+						t_dt = " db \"\",";
+					else if (t_dt == "int8")
 						t_dt = " db";
 					else if (t_dt == "int16")
 						t_dt = " dw";
@@ -177,6 +186,8 @@ std::string cg_declaration(std::vector<FToken> tokens, int& pos)
 			pos++;
 			if (tokens[pos].tokenType == TOKEN_IDENT)
 			{
+				// std::cout << tokens[pos].literal;
+
 				pos++;
 				if (tokens[pos].tokenType == TOKEN_SYMBOL && tokens[pos].literal == "(")
 				{
@@ -196,7 +207,35 @@ std::string cg_declaration(std::vector<FToken> tokens, int& pos)
 				}
 				else if (tokens[pos].tokenType == TOKEN_SYMBOL && tokens[pos].literal == "=")
 				{
+					pos++;
+					
+					if (tokens[pos].tokenType == TOKEN_STRING)
+					{
+						// not sure how i would go about editing a string variable
+					}
+					else
+					{
+						bool functionCall = false;
 
+						for (int i = pos; i < tokens.size(); tokens[i].literal != ";")
+						{
+							if (tokens[i].literal == "(")
+							{
+								functionCall = true;
+							}
+
+							i++;
+						}
+
+						if (functionCall)
+						{
+							assembly_output += "call " + tokens[pos].literal + "\nmov " + tokens[pos-2].literal + ", rax\n";
+						}
+						else
+						{
+							assembly_output += "\nmov " + tokens[pos-2].literal + ", " + tokens[pos].literal + "\n";
+						}
+					}
 				}
 			}
 		}
@@ -207,13 +246,14 @@ std::string cg_declaration(std::vector<FToken> tokens, int& pos)
 
 void cg_generate(std::vector<FToken> tokens)
 {
-
 	std::string assembly_output = cg_collect_variables(tokens) + "section .text\n.global main\n";
 	int position = 0;
 
 	while (position < tokens.size())
 	{
 		assembly_output += cg_declaration(tokens, position);
+
+		// std::cout << tokens[position].tokenType << " | " << tokens[position].literal << "\n";
 
 		position++;
 
