@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
 
 	auto tokens = tokenize(sourceCode, {"(", ")", "[", "]", "<", ">", "{", "}", ";", "::", ":", "=", "*", "+", "-" "/"}, {"int", "string", "return"}, {"int", "float", "bool", "string", "null"});
 
+	cg_generate(tokens);
+
 	for (auto i: tokens)
 		std::cout << i.tokenType << " " << i.literal << "\n";
 
