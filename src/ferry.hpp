@@ -10,7 +10,8 @@ enum FTokenType
 	TOKEN_IDENT,
 	TOKEN_KEYWORD,
 	TOKEN_D_TYPE,
-	TOKEN_STRING
+	TOKEN_STRING,
+	TOKEN_NUMBER
 };
 
 class FToken
@@ -128,12 +129,53 @@ std::vector<FToken> tokenize(std::string sourceCode, const std::vector<std::stri
 
 			continue;
 		}
+		else if (isdigit(sourceCode[currentIndex]))
+		{
+			startIndex = currentIndex;
+
+			while (currentIndex < sourceCode.size() && isdigit(sourceCode[currentIndex]) && currentIndex - startIndex > MAX_LEN)
+			{
+				currentIndex++;
+				currentColumn++;
+			}
+
+			currentIndex++;
+
+			std::string _substring = sourceCode.substr(startIndex, currentIndex - startIndex);
+
+			// std::cout << startIndex << " | " << currentIndex << " | " << _substring << "\n";
+
+			bool isFloat = _substring.find(".") != std::string::npos;
+
+			tokens.push_back({TOKEN_NUMBER, _substring});
+
+		}
 
 		currentIndex++;
 	}
 
 	return tokens;
 };
+
+std::string cg_check_value(std::vector<FToken> tokens)
+{
+	// 10 + 5 * 2 - 12 / 3
+	// exampleFunction()
+	// exampleVar
+	// "Exaxmple string"
+	// exampleStringVar + " Hello!"
+	
+
+
+	std::string assembly_output = "";
+
+	for (int i = 0; i < tokens.size(); i++)
+	{
+
+	}
+
+	return assembly_output;
+}
 
 std::string cg_collect_variables(std::vector<FToken> tokens)
 {
@@ -186,7 +228,7 @@ std::string cg_declaration(std::vector<FToken> tokens, int& pos)
 			pos++;
 			if (tokens[pos].tokenType == TOKEN_IDENT)
 			{
-				// std::cout << tokens[pos].literal;
+				// cstd::cout << tokens[pos].literal << " | " << tokens[pos].tokenType << "\n";
 
 				pos++;
 				if (tokens[pos].tokenType == TOKEN_SYMBOL && tokens[pos].literal == "(")
@@ -200,15 +242,12 @@ std::string cg_declaration(std::vector<FToken> tokens, int& pos)
 					{
 						pos++;
 					}
-
-					if (pos < tokens.size())
-						pos++;
 						
 				}
 				else if (tokens[pos].tokenType == TOKEN_SYMBOL && tokens[pos].literal == "=")
 				{
 					pos++;
-					
+
 					if (tokens[pos].tokenType == TOKEN_STRING)
 					{
 						// not sure how i would go about editing a string variable
@@ -237,7 +276,15 @@ std::string cg_declaration(std::vector<FToken> tokens, int& pos)
 						}
 					}
 				}
+				
 			}
+		}
+	}
+	else if (tokens[pos].tokenType == TOKEN_KEYWORD)
+	{
+		if (tokens[pos].literal == "return")
+		{
+			std::cout << "found return keyword\n";
 		}
 	}
 
@@ -251,14 +298,14 @@ void cg_generate(std::vector<FToken> tokens)
 
 	while (position < tokens.size())
 	{
-		assembly_output += cg_declaration(tokens, position);
 
-		// std::cout << tokens[position].tokenType << " | " << tokens[position].literal << "\n";
+		// std::cout << "xhfghfghfgdfsdfg | " << tokens[position].tokenType << " | " << tokens[position].literal << "\n";
+		assembly_output += cg_declaration(tokens, position);
 
 		position++;
 
-		if (position == tokens.size()) break;
 	}
 
 	std::cout << assembly_output;
 }
+
