@@ -22,14 +22,14 @@ int main(int argc, char *argv[])
 
 	sourceFile.close();
 
-	auto tokens = tokenize(sourceCode, {"(", ")", "[", "]", "<", ">", "{", "}", ";", "::", ":", "=", "*", "+", "-" "/"}, {"return"}, {"int8", "int16", "int16", "int32", "float", "bool", "string", "null"});
-
-	cg_generate(tokens);
+	auto tokens = tokenize(sourceCode, {"(", ")", "[", "]", "<", ">", "{", "}", ";", "::", ":", "=", "*", "+", "-", "/"}, {"return"}, {"int8", "int16", "int16", "int32", "float", "bool", "string", "null"});
 
 	/*
 	for (auto i: tokens)
 		std::cout << i.tokenType << " " << i.literal << "\n";
 	*/
+
+	cg_generate(tokens);
 
 	return 1;
 }
