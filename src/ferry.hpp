@@ -268,11 +268,11 @@ std::string cg_declaration(std::vector<FToken> tokens, int& pos)
 
 						if (functionCall)
 						{
-							assembly_output += "call " + tokens[pos].literal + "\nmov " + tokens[pos-2].literal + ", rax\n";
+							assembly_output += "\tcall " + tokens[pos].literal + "\nmov " + tokens[pos-2].literal + ", rax\n";
 						}
 						else
 						{
-							assembly_output += "\nmov " + tokens[pos-2].literal + ", " + tokens[pos].literal + "\n";
+							assembly_output += "\tmov " + tokens[pos-2].literal + ", " + tokens[pos].literal + "\n";
 						}
 					}
 				}
@@ -284,7 +284,10 @@ std::string cg_declaration(std::vector<FToken> tokens, int& pos)
 	{
 		if (tokens[pos].literal == "return")
 		{
-			std::cout << "found return keyword\n";
+			pos++;
+			assembly_output += "\tmov rax, " + cg_check_value(tokens[pos]) + "\n";
+			
+			assembly_output += "\tret";
 		}
 	}
 
